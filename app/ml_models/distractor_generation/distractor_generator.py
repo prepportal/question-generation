@@ -2,7 +2,6 @@
 from typing import List
 import string
 import pytorch_lightning as pl
-from sklearn.model_selection import train_test_split
 from transformers import (
     AdamW,
     T5ForConditionalGeneration,
