@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS, cross_origin
 import json
 import nltk
@@ -37,7 +37,7 @@ def generate():
     questions = MQC_Generator.generate_mcq_questions(text, count)
     result = list(map(lambda x: json.dumps(x.__dict__), questions))
 
-    return json.dumps(result)
+    return jsonify(result)
 
 
 if __name__ == '__main__':
