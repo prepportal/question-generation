@@ -35,6 +35,7 @@ def generate():
         count = int(count)
     
     questions = MQC_Generator.generate_mcq_questions(text, count)
+    print(questions)
     result = list(map(lambda x: json.dumps(x.__dict__), questions))
 
     return jsonify(result)
