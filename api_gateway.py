@@ -28,7 +28,11 @@ def generate():
 
     requestJson = json.loads(request.data)
     text = requestJson['text']
-    count = 10 if requestJson['count'] == '' else int(requestJson['count'])
+    count = requestJson.get('count', 10)
+    if count == '':
+        count = 10
+    else:
+        count = int(count)
     
     questions = MQC_Generator.generate_mcq_questions(text, count)
     result = list(map(lambda x: json.dumps(x.__dict__), questions))
