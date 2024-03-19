@@ -7,7 +7,7 @@ from nltk.tokenize import sent_tokenize
 from flashtext import KeywordProcessor
 
 
-class Fill_In_The_Blanks:
+class FIBGenerator:
 
     def generate_fill_in_the_blanks(self, text, num_questions):
         sentences = self.tokenize_sentences(text)
@@ -82,6 +82,3 @@ class Fill_In_The_Blanks:
                 if no_of_replacements < 2:
                     questions.append({"question": line, "answer":key})
         return questions[:num_questions]
-    
-fill = Fill_In_The_Blanks()
-print(fill.generate_fill_in_the_blanks("The quick brown fox jumps over the lazy dog", 1))

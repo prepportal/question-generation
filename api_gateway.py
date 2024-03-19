@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 import json
 import nltk
 from app.mcq_generation import MCQGenerator
+from app.fill_in_the_blanks import FIBGenerator
 from downloader import FilesDownloder
 
 app = Flask(__name__)
@@ -45,7 +46,7 @@ def generate():
                 "answer": question.answerText
             })
     elif q_type == 'fib':
-        questionjson = MQC_Generator.generate_fill_in_the_blanks(text, count)
+        questionjson = FIBGenerator.generate_fill_in_the_blanks(text, count)
     return jsonify(questionjson)
 
 
