@@ -11,6 +11,8 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 FilesDownloder()
 nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('wordnet')
 
 MQC_Generator = MCQGenerator()
 
