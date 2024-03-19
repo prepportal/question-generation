@@ -37,7 +37,13 @@ def generate():
     questions = MQC_Generator.generate_mcq_questions(text, count)
     questionjson = []
     for question in questions:
-        questionjson.append({"question": question.questionText, "distractors": question.distractors, "answer": question.answerText})
+        questionjson.append({
+            "question": question.questionText,
+            "option1": question.distractors[0] if len(question.distractors) > 0 else None,
+            "option2": question.distractors[1] if len(question.distractors) > 1 else None,
+            "option3": question.distractors[2] if len(question.distractors) > 2 else None,
+            "answer": question.answerText
+        })
 
     return jsonify(questionjson)
 
