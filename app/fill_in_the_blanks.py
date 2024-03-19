@@ -70,9 +70,7 @@ class Fill_In_The_Blanks:
 
 
     def get_fill_in_the_blanks(self, sentence_mapping, num_questions):
-        out={"title":"Fill in the blanks for these sentences with matching words at the top"}
         questions = []
-        keys=[]
         for key in sentence_mapping:
             if len(sentence_mapping[key])>0:
                 sent = sentence_mapping[key][0]
@@ -83,8 +81,7 @@ class Fill_In_The_Blanks:
                 # if (sentence_mapping[key][0] not in processed) and no_of_replacements < 2:
                 if no_of_replacements < 2:
                     questions.append({"question": line, "answer":key})
-        out["questions"] = questions[:num_questions]
-        return out
+        return questions[:num_questions]
     
 fill = Fill_In_The_Blanks()
 print(fill.generate_fill_in_the_blanks("The quick brown fox jumps over the lazy dog", 1))

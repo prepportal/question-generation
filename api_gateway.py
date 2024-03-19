@@ -30,23 +30,22 @@ def generate():
 
     requestJson = json.loads(request.data)
     text = requestJson['text']
-    count = requestJson.get('count', 10)
-    if count == '':
-        count = 10
-    else:
-        count = int(count)
+    count = requestJson.get('count', 3)
+    q_type = requestJson.get('type', 'mcq')
     
-    questions = MQC_Generator.generate_mcq_questions(text, count)
-    questionjson = []
-    for question in questions:
-        questionjson.append({
-            "question": question.questionText,
-            "option1": question.distractors[0] if len(question.distractors) > 0 else None,
-            "option2": question.distractors[1] if len(question.distractors) > 1 else None,
-            "option3": question.distractors[2] if len(question.distractors) > 2 else None,
-            "answer": question.answerText
-        })
-
+    if q_type == 'mcq':
+        questions = MQC_Generator.generate_mcq_questions(text, count)
+        questionjson = []
+        for question in questions:
+            questionjson.append({
+                "question": question.questionText,
+                "option1": question.distractors[0] if len(question.distractors) > 0 else None,
+                "option2": question.distractors[1] if len(question.distractors) > 1 else None,
+                "option3": question.distractors[2] if len(question.distractors) > 2 else None,
+                "answer": question.answerText
+            })
+    elif q_type == 'fib':
+        questionjson = MQC_Generator.generate_fill_in_the_blanks(text, count)
     return jsonify(questionjson)
 
 
