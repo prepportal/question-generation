@@ -16,6 +16,7 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 
 MQC_Generator = MCQGenerator()
+FIB_Generator = FIBGenerator()
 
 @app.route("/")
 @cross_origin()
@@ -46,7 +47,7 @@ def generate():
                 "answer": question.answerText
             })
     elif q_type == 'fib':
-        questionjson = FIBGenerator.generate_fill_in_the_blanks(text, count)
+        questionjson = FIB_Generator.generate_fill_in_the_blanks(text, count)
     return jsonify(questionjson)
 
 
