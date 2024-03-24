@@ -17,7 +17,7 @@ class TrueorFalseGenerator:
     def generate(self, text: str) -> str:
         return self.model.predict(text)
     
-    def beam_search_decoding (self, inp_ids,attn_mask, count):
+    def beam_search_decoding (self, inp_ids,attn_mask):
         beam_output = self.model.generate(input_ids=inp_ids,
                                         attention_mask=attn_mask,
                                         max_length=256,
