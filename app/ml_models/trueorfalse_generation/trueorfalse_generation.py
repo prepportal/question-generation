@@ -39,7 +39,7 @@ class TrueorFalseGenerator:
             input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
             output = self.beam_search_decoding(input_ids, attention_masks)
             for out in output:
-                question.append({"question": out, "answer": True if truefalse == "yes" else False})
+                question.append({"question": out, "answer": True if truefalse == "yes" else False, "option1": "true" if truefalse == "yes" else "false"})
         return question
     
     def _split_context_according_to_desired_count(self, context: str, desired_count: int) -> List[str]:
