@@ -19,7 +19,7 @@ class TrueorFalseGenerator:
         beam_output = self.model.generate(input_ids=inp_ids,
                                         attention_mask=attn_mask,
                                         max_length=256,
-                                    num_beams=5,
+                                    num_beams=10,
                                     num_return_sequences=count,
                                     no_repeat_ngram_size=2,
                                     early_stopping=True
