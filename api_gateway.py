@@ -18,6 +18,7 @@ nltk.download('wordnet')
 
 MQC_Generator = MCQGenerator()
 FIB_Generator = FIBGenerator()
+TrueorFalse_Generator = TrueorFalseGenerator()
 
 @app.route("/")
 @cross_origin()
@@ -50,7 +51,7 @@ def generate():
     elif q_type == 'fib':
         questionjson = FIB_Generator.generate_fill_in_the_blanks(text, count)
     elif q_type == 'truefalse':
-        questionjson = TrueorFalseGenerator.generate(text, count)
+        questionjson = TrueorFalse_Generator.generate(text, count)
     return jsonify(questionjson)
 
 
