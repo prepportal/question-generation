@@ -34,5 +34,5 @@ class FilesDownloader:
         
     def download_trueorfalse_model(self):
         if not os.path.exists(self.distractor_model_path + "BoolQ"):
-            gdown.download(id=self.trueorfalse_model_id, output=self.distractor_model_path)
+            gdown.download_folder(id=self.trueorfalse_model_id, output=self.distractor_model_path)
         print("True or False model downloaded successfully!")

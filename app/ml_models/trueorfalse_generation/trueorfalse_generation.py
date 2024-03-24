@@ -4,7 +4,7 @@ from transformers import T5ForConditionalGeneration,T5Tokenizer
 
 class TrueorFalseGenerator:
     def __init__(self,):
-        model_path = "app/ml_models/true_or_false/models/"
+        model_path = "app/ml_models/true_or_false/models/BoolQ"
         self.model = T5ForConditionalGeneration.from_pretrained(model_path)
         self.tokenizer = T5Tokenizer.from_pretrained(model_path)
         self.set_seed(42)
