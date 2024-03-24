@@ -1,24 +1,20 @@
 import torch
 from transformers import T5ForConditionalGeneration,T5Tokenizer
 
-
+torch.manual_seed(42)
+if torch.cuda.is_available():
+    torch.cuda.manual_seed_all(42)
 class TrueorFalseGenerator:
     def __init__(self,):
         model_path = "app/ml_models/true_or_false/models/BoolQ"
         self.model = T5ForConditionalGeneration.from_pretrained(model_path)
         self.tokenizer = T5Tokenizer.from_pretrained(model_path)
-        self.set_seed(42)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
 
     def generate(self, text: str) -> str:
         return self.model.predict(text)
     
-    def set_seed(seed):
-        torch.manual_seed(seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed_all(seed)
-
     def beam_search_decoding (self, inp_ids,attn_mask, count):
         beam_output = self.model.generate(input_ids=inp_ids,
                                         attention_mask=attn_mask,
