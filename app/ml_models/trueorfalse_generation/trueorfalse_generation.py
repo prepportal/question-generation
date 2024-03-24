@@ -1,5 +1,7 @@
 import torch
 from transformers import T5ForConditionalGeneration,T5Tokenizer
+from nltk.tokenize import sent_tokenize
+from typing import List
 
 torch.manual_seed(42)
 if torch.cuda.is_available():
@@ -20,7 +22,7 @@ class TrueorFalseGenerator:
                                         attention_mask=attn_mask,
                                         max_length=256,
                                     num_beams=10,
-                                    num_return_sequences=count,
+                                    num_return_sequences=1,
                                     no_repeat_ngram_size=2,
                                     early_stopping=True
                                     )
@@ -29,11 +31,33 @@ class TrueorFalseGenerator:
         return [Question.strip().capitalize() for Question in Questions]
     
     def generate(self, context: str, count: int, truefalse = "yes") -> str:
-        text = "truefalse: %s passage: %s </s>" % (truefalse, context)
-        encoding = self.tokenizer.encode_plus(text, return_tensors="pt")
-        input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
-        output = self.beam_search_decoding(input_ids, attention_masks, count)
+        context_splits = self._split_context_according_to_desired_count(context, count)
         question = []
-        for out in output:
-            question.append({"question": out, "answer": True if truefalse == "yes" else False})
+        for splits in context_splits:
+            text = "truefalse: %s passage: %s </s>" % (truefalse, splits)
+            encoding = self.tokenizer.encode_plus(text, return_tensors="pt")
+            input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
+            output = self.beam_search_decoding(input_ids, attention_masks)
+            for out in output:
+                question.append({"question": out, "answer": True if truefalse == "yes" else False})
         return question
+    
+    def _split_context_according_to_desired_count(self, context: str, desired_count: int) -> List[str]:
+        sents = sent_tokenize(context)
+        sent_ratio = len(sents) / desired_count
+
+        context_splits = []
+
+        if sent_ratio < 1:
+            return sents
+        else:
+            take_sents_count = int(sent_ratio + 1)
+
+            start_sent_index = 0
+
+            while start_sent_index < len(sents):
+                context_split = ' '.join(sents[start_sent_index: start_sent_index + take_sents_count])
+                context_splits.append(context_split)
+                start_sent_index += take_sents_count - 1
+
+        return context_splits
