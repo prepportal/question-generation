@@ -4,13 +4,14 @@ import json
 import nltk
 from app.mcq_generation import MCQGenerator
 from app.fill_in_the_blanks import FIBGenerator
-from downloader import FilesDownloder
+from app.ml_models.trueorfalse_generation.trueorfalse_generation import TrueorFalseGenerator
+from downloader import FilesDownloader
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-FilesDownloder()
+FilesDownloader()
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
@@ -48,6 +49,8 @@ def generate():
             })
     elif q_type == 'fib':
         questionjson = FIB_Generator.generate_fill_in_the_blanks(text, count)
+    elif q_type == 'truefalse':
+        questionjson = TrueorFalseGenerator.generate(text, count)
     return jsonify(questionjson)
 
 
