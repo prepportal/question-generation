@@ -5,6 +5,7 @@ import nltk
 from app.mcq_generation import MCQGenerator
 from app.fill_in_the_blanks import FIBGenerator
 from app.ml_models.trueorfalse_generation.trueorfalse_generation import TrueorFalseGenerator
+from app.modules.find_title import find_title
 from downloader import FilesDownloader
 
 app = Flask(__name__)
@@ -31,8 +32,8 @@ def hello():
 def generate():
     #postman
     # text = request.form['text']
-
     requestJson = json.loads(request.data)
+    topic = find_title(requestJson['text'])
     text = requestJson['text']
     count = requestJson.get('count', 3)
     q_type = requestJson.get('type', 'mcq')
@@ -52,7 +53,7 @@ def generate():
         questionjson = FIB_Generator.generate_fill_in_the_blanks(text, count)
     elif q_type == 'truefalse':
         questionjson = TrueorFalse_Generator.generate(text, count)
-    return jsonify(questionjson)
+    return jsonify({"questions":questionjson, "topic": topic})
 
 
 if __name__ == '__main__':
