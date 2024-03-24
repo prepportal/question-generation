@@ -17,7 +17,7 @@ nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
 
-MQC_Generator = MCQGenerator()
+MCQ_Generator = MCQGenerator()
 FIB_Generator = FIBGenerator()
 TrueorFalse_Generator = TrueorFalseGenerator()
 
@@ -39,7 +39,7 @@ def generate():
     q_type = requestJson.get('type', 'mcq')
     
     if q_type == 'mcq':
-        questions = MQC_Generator.generate_mcq_questions(text, count)
+        questions = MCQ_Generator.generate_mcq_questions(text, count)
         questionjson = []
         for question in questions:
             questionjson.append({
