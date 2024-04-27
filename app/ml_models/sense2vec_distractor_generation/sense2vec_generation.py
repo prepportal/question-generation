@@ -6,7 +6,7 @@ from typing import List
 class Sense2VecDistractorGeneration():
     def __init__(self):
         self.s2v = Sense2Vec().from_disk('app/ml_models/sense2vec_distractor_generation/data/s2v_old')
-    def edits(word):
+    def edits(self, word):
         "All edits that are one edit away from `word`."
         letters = f'abcdefghijklmnopqrstuvwxyz {string.punctuation}'
         splits = [(word[:i], word[i:]) for i in range(len(word) + 1)]
