@@ -16,7 +16,7 @@ class Sense2VecDistractorGeneration():
         inserts = [L + c + R for L, R in splits for c in letters]
         return set(deletes + transposes + replaces + inserts)
     
-    def generate(self, answer: str, desired_count: int) -> List[str]:
+    def generate(self, word: str, desired_count: int) -> List[str]:
         output = []
         word_preprocessed = word.translate(
             word.maketrans("", "", string.punctuation))
