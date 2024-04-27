@@ -17,6 +17,7 @@ class Sense2VecDistractorGeneration():
             return []
 
         most_similar = self.s2v.most_similar(sense, n=desired_count)
+        print(most_similar)
 
         for phrase in most_similar:
             normalized_phrase = phrase[0].split("|")[0].replace("_", " ").lower()

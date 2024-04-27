@@ -125,12 +125,11 @@ class MCQGenerator():
         return context_splits
 
     def _get_noun_adj_verb(self, text):
-        out=[]
         try:
             extractor = pke.unsupervised.MultipartiteRank()
             extractor.load_document(input=text,language='en')
             #    not contain punctuation marks or stopwords as candidates.
-            pos = {'VERB', 'ADJ', 'NOUN'}
+            pos = {'NOUN'}
             stoplist = list(string.punctuation)
             stoplist += ['-lrb-', '-rrb-', '-lcb-', '-rcb-', '-lsb-', '-rsb-']
             stoplist += stopwords.words('english')
@@ -146,7 +145,7 @@ class MCQGenerator():
         except:
             keyword = '[MASK]'
             traceback.print_exc()
-
+        print(keyword)
         return keyword
 
     
