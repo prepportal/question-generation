@@ -73,9 +73,9 @@ class QuestionGenerator():
 
         return generated_question
 
-    def generate_qna(self, context: str) -> Tuple[str, str]:
+    def generate_qna(self, context: str, answer: str) -> Tuple[str, str]:
         answer_mask = '[MASK]'
-        model_output = self._model_predict(answer_mask, context)
+        model_output = self._model_predict(answer, context)
 
         qna_pair = model_output.split('<sep>')
 

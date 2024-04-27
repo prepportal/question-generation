@@ -1,6 +1,9 @@
+import string
+import traceback
 from typing import List
 from nltk.tokenize import sent_tokenize
 import toolz
+import pke
 
 from app.modules.duplicate_removal import remove_distractors_duplicate_with_correct_answer, remove_duplicates
 from app.modules.text_cleaning import clean_text
@@ -10,6 +13,7 @@ from app.ml_models.sense2vec_distractor_generation.sense2vec_generation import S
 from app.models.question import Question
 
 import time
+from nltk.corpus import stopwords
 
 
 class MCQGenerator():
@@ -23,9 +27,6 @@ class MCQGenerator():
 
         self.question_generator = QuestionGenerator()
         print('Loaded QuestionGenerator in', round(time.perf_counter() - start_time, 2), 'seconds.') if is_verbose else ''
-
-        self.distractor_generator = DistractorGenerator()
-        print('Loaded DistractorGenerator in', round(time.perf_counter() - start_time, 2), 'seconds.') if is_verbose else ''
 
         self.sense2vec_distractor_generator = Sense2VecDistractorGeneration()
         print('Loaded Sense2VecDistractorGenerator in', round(time.perf_counter() - start_time, 2), 'seconds.') if is_verbose else ''
@@ -70,7 +71,8 @@ class MCQGenerator():
         questions = []
 
         for split in context_splits:
-            answer, question = self.question_generator.generate_qna(split)
+            keyword = self._get_noun_adj_verb(split)
+            answer, question = self.question_generator.generate_qna(split, keyword)
             questions.append(Question(answer.capitalize(), question))
 
         questions = list(toolz.unique(questions, key=lambda x: x.answerText))
@@ -79,17 +81,12 @@ class MCQGenerator():
 
     def _generate_distractors(self, context: str, questions: List[Question]) -> List[Question]:
         for question in questions:
-            t5_distractors =  self.distractor_generator.generate(5, question.answerText, question.questionText, context)
-
-            if len(t5_distractors) < 3:
-                s2v_distractors = self.sense2vec_distractor_generator.generate(question.answerText, 3)
-                distractors = t5_distractors + s2v_distractors
-            else:
-                distractors = t5_distractors
+  
+            distractors = self.sense2vec_distractor_generator.generate(question.answerText, 3)
 
 
-            distractors = remove_duplicates(distractors)
-            distractors = remove_distractors_duplicate_with_correct_answer(question.answerText, distractors)
+            # distractors = remove_duplicates(distractors)
+            # distractors = remove_distractors_duplicate_with_correct_answer(question.answerText, distractors)
             #TODO - filter distractors having a similar bleu score with another distractor
 
             question.distractors = distractors
@@ -126,4 +123,30 @@ class MCQGenerator():
                 start_sent_index += take_sents_count - 1
 
         return context_splits
+
+    def _get_noun_adj_verb(self, text):
+        out=[]
+        try:
+            extractor = pke.unsupervised.MultipartiteRank()
+            extractor.load_document(input=text,language='en')
+            #    not contain punctuation marks or stopwords as candidates.
+            pos = {'VERB', 'ADJ', 'NOUN'}
+            stoplist = list(string.punctuation)
+            stoplist += ['-lrb-', '-rrb-', '-lcb-', '-rcb-', '-lsb-', '-rsb-']
+            stoplist += stopwords.words('english')
+            # extractor.candidate_selection(pos=pos, stoplist=stoplist)
+            extractor.candidate_selection(pos=pos)
+            # 4. build the Multipartite graph and rank candidates using random walk,
+            #    alpha controls the weight adjustment mechanism, see TopicRank for
+            #    threshold/method parameters.
+            extractor.candidate_weighting(alpha=1.1,
+                                        threshold=0.75,
+                                        method='average')
+            keyword = extractor.get_n_best(n=1)
+        except:
+            keyword = '[MASK]'
+            traceback.print_exc()
+
+        return keyword
+
     
