@@ -18,8 +18,6 @@ class Sense2VecDistractorGeneration():
     
     def generate(self, word: str, desired_count: int) -> List[str]:
         output = []
-        if not self.MCQs_available(word, self.s2v):
-            return output
         word_preprocessed = word.translate(
             word.maketrans("", "", string.punctuation))
         word_preprocessed = word_preprocessed.lower()
