@@ -72,6 +72,7 @@ class MCQGenerator():
 
         for split in context_splits:
             keyword = self._get_noun_adj_verb(split)
+            print(keyword)
             answer, question = self.question_generator.generate_qna(split, keyword)
             questions.append(Question(answer.capitalize(), question))
 
