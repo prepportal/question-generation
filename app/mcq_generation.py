@@ -71,10 +71,11 @@ class MCQGenerator():
         questions = []
 
         for split in context_splits:
-            keyword = self._get_noun_adj_verb(split)
-            print(keyword)
-            answer, question = self.question_generator.generate_qna(split, keyword)
-            questions.append(Question(answer.capitalize(), question))
+            keywords = self._get_noun_adj_verb(split)
+            for key in keywords:
+                answer, question = self.question_generator.generate_qna(split, key)
+                print(answer, question)
+                questions.append(Question(answer.capitalize(), question))
 
         questions = list(toolz.unique(questions, key=lambda x: x.answerText))
 
