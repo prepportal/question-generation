@@ -73,9 +73,11 @@ class MCQGenerator():
         for split in context_splits:
             keywords = self._get_noun_adj_verb(split)
             for key in keywords:
-                answer, question = self.question_generator.generate_qna(split, key)
-                print(answer, question)
-                questions.append(Question(answer.capitalize(), question))
+                if len(questions) >= desired_count:
+                    break
+                if self.sense2vec_distractor_generator.MCQs_available(key):
+                    answer, question = self.question_generator.generate_qna(split, key)
+                    questions.append(Question(answer.capitalize(), question))
 
         questions = list(toolz.unique(questions, key=lambda x: x.answerText))
 

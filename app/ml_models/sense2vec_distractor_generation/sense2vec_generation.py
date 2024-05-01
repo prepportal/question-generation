@@ -44,7 +44,7 @@ class Sense2VecDistractorGeneration():
 
         return list(OrderedDict.fromkeys(output))
 
-    def MCQs_available(self,word, s2v):
+    def MCQs_available(self,word):
         word = word.replace(" ", "_")
         sense = self.s2v.get_best_sense(word)
         return sense is not None
