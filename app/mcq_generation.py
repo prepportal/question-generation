@@ -125,27 +125,28 @@ class MCQGenerator():
         return context_splits
 
     def _get_noun_adj_verb(self, text):
+        out = []
+        extractor = pke.unsupervised.MultipartiteRank()
+        extractor.load_document(input=text, language='en')
+        pos = {'PROPN', 'NOUN'}
+        stoplist = list(string.punctuation)
+        stoplist += stopwords.words('english')
+        extractor.candidate_selection(pos=pos)
+        # 4. build the Multipartite graph and rank candidates using random walk,
+        #    alpha controls the weight adjustment mechanism, see TopicRank for
+        #    threshold/method parameters.
         try:
-            extractor = pke.unsupervised.MultipartiteRank()
-            extractor.load_document(input=text,language='en')
-            #    not contain punctuation marks or stopwords as candidates.
-            pos = {'NOUN'}
-            stoplist = list(string.punctuation)
-            stoplist += ['-lrb-', '-rrb-', '-lcb-', '-rcb-', '-lsb-', '-rsb-']
-            stoplist += stopwords.words('english')
-            # extractor.candidate_selection(pos=pos, stoplist=stoplist)
-            extractor.candidate_selection(pos=pos)
-            # 4. build the Multipartite graph and rank candidates using random walk,
-            #    alpha controls the weight adjustment mechanism, see TopicRank for
-            #    threshold/method parameters.
             extractor.candidate_weighting(alpha=1.1,
                                         threshold=0.75,
                                         method='average')
-            keyword = extractor.get_n_best(n=1)
         except:
-            keyword = '[MASK]'
-            traceback.print_exc()
-        print(keyword)
-        return keyword
+            return out
+
+        keyphrases = extractor.get_n_best(n=10)
+
+        for key in keyphrases:
+            out.append(key[0])
+
+        return out
 
     
