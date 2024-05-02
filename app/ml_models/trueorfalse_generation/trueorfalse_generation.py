@@ -1,3 +1,5 @@
+import random
+import numpy
 import torch
 from transformers import T5ForConditionalGeneration,T5Tokenizer
 from nltk.tokenize import sent_tokenize
@@ -13,6 +15,13 @@ class TrueorFalseGenerator:
         self.tokenizer = T5Tokenizer.from_pretrained(model_path)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
+        self.set_seed(42)
+        
+    def set_seed(self,seed):
+        numpy.random.seed(seed)
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
 
     def generate(self, text: str) -> str:
         return self.model.predict(text)
@@ -30,16 +39,17 @@ class TrueorFalseGenerator:
                     beam_output]
         return [Question.strip().capitalize() for Question in Questions]
     
-    def generate(self, context: str, count: int, truefalse = "yes") -> str:
+    def generate(self, context: str, count: int) -> str:
         context_splits = self._split_context_according_to_desired_count(context, count)
         question = []
         for splits in context_splits:
-            text = "truefalse: %s passage: %s </s>" % (truefalse, splits)
+            answer = self.random_choice()
+            text = "truefalse: %s passage: %s </s>" % (splits, answer)
             encoding = self.tokenizer.encode_plus(text, return_tensors="pt")
             input_ids, attention_masks = encoding["input_ids"].to(self.device), encoding["attention_mask"].to(self.device)
             output = self.beam_search_decoding(input_ids, attention_masks)
             for out in output:
-                question.append({"question": out, "answer": "true" if truefalse == "yes" else "false", "option1": "false" if truefalse == "yes" else "true"})
+                question.append({"question": out, "answer": "true" if answer == 1 else 0, "option1": "false" if answer == 0 else 1})
         return question
     
     def _split_context_according_to_desired_count(self, context: str, desired_count: int) -> List[str]:
@@ -61,3 +71,7 @@ class TrueorFalseGenerator:
                 start_sent_index += take_sents_count - 1
 
         return context_splits
+    
+    def random_choice(self):
+        a = random.choice([0,1])
+        return bool(a)
