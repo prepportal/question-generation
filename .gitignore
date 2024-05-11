@@ -1,6 +1,6 @@
 /.idea
 
-/venv
+/.venv
 
 app/ml_models/answer_generation/models/squad-answer-generation.ckpt
 app/ml_models/question_generation/models/multitask-qg-ag.ckpt

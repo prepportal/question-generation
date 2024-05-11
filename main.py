@@ -16,6 +16,7 @@ FilesDownloader()
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
+nltk.download('brown')
 
 MCQ_Generator = MCQGenerator()
 FIB_Generator = FIBGenerator()
@@ -47,7 +48,7 @@ def generate():
                 "option1": question.distractors[0] if len(question.distractors) > 0 else None,
                 "option2": question.distractors[1] if len(question.distractors) > 1 else None,
                 "option3": question.distractors[2] if len(question.distractors) > 2 else None,
-                "answer": question.answerText
+                "answer": question.answerText.capitalize()
             })
     elif q_type == 'fib':
         questionjson = FIB_Generator.generate_fill_in_the_blanks(text, count)

@@ -16,7 +16,7 @@ class Sense2VecDistractorGeneration():
         inserts = [L + c + R for L, R in splits for c in letters]
         return set(deletes + transposes + replaces + inserts)
     
-    def generate(self, word: str, desired_count: int) -> List[str]:
+    def generate(self, word: str) -> List[str]:
         output = []
         word_preprocessed = word.translate(
             word.maketrans("", "", string.punctuation))
@@ -46,3 +46,6 @@ class Sense2VecDistractorGeneration():
         word = word.replace(" ", "_")
         sense = self.s2v.get_best_sense(word)
         return sense is not None
+
+# s = Sense2VecDistractorGeneration()
+# print(s.generate("family tree"))
